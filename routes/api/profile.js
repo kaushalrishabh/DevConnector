@@ -120,4 +120,176 @@ router.post(
     }
 );
 
+// @Route   GET api/profile
+// @desc    Get all profile
+// @access  Private
+
+router.get('/', async(req, res) => {
+ 
+    try
+    {
+        const profiles = await Profile.find().populate('user', ['name','avatar']);
+        res.json(profiles);
+    }
+    catch(err)
+    {
+        console.error(err.message);
+        res.status(500).json('Send Error');
+    }
+
+});
+
+// @Route   GET api/profile/user/:user_id
+// @desc    Get profiles by ID
+// @access  Public
+
+router.get('/user/:user_id', async(req, res) => {
+ 
+    try
+    {
+        const profiles = await Profile.findOne(
+            {user : req.params.user_id}
+        )
+        .populate('user', 
+            [
+                'name','avatar'
+            ]
+        );
+
+        if(!profiles) 
+            return res.status(400).json({msg: 'Profile not found'});
+        
+        res.json(profiles);
+    }
+    catch(err)
+    {
+        console.error(err.message);
+        if(err.kind == 'ObjectId')
+            return res.status(400).json({msg: 'Profile not found'});
+        
+            res.status(500).send('Send Error');
+    }
+
+});
+
+// @Route   DELETE api/profile/
+// @desc    DELETE profiles by ID
+// @access  Private
+
+router.delete('/', auth,async(req, res) => {
+ 
+    try
+    {
+        //todo - Remove User posts
+        
+        //Remove Profile
+        await Profile.findOneAndRemove({ user: req.user.id});
+        // Remove User
+        await User.findOneAndRemove({ _id: req.user.id});
+
+        res.json({msg: 'User removed'});
+    }
+    catch(err)
+    {
+        console.error(err.message);
+        if(err.kind == 'ObjectId')
+            return res.status(400).json({msg: 'Profile not found'});
+        
+            res.status(500).send('Send Error');
+    }
+
+});
+
+// @Route   PUT api/profile/experience
+// @desc    Add profile experience
+// @access  Private
+ 
+router.put('/experience', 
+    [ 
+        auth,
+        [
+            check('title','Title is required')
+            .not()
+            .isEmpty(),
+            check('company','Company is required')
+            .not()
+            .isEmpty(),
+            check('from','from date is required')
+            .not()
+            .isEmpty(),
+        ]
+    ], 
+    async(req, res) => 
+    {
+        const errors = validationResult(req);
+        if(!errors.isEmpty())
+            return res.status(400).json({ errors: error.array() });
+    
+        const 
+        {   
+            title,
+            company,
+            location,
+            from,
+            to,
+            current,
+            description
+        } = req.body
+        
+        const newExp = 
+        {
+            title,
+            company,
+            location,
+            from,
+            to,
+            current,
+            description
+        }
+
+        try
+        {
+            const profile = await Profile.findOne({ user: req.user.id});
+            if(!profile)
+                return res.status(404).send('Create Profile First');
+
+            profile.experience.unshift(newExp);
+            await profile.save();
+            res.json(profile);
+        }
+        catch(err)
+        {
+                console.error(err.message);
+                res.status(500).send('Server Error');
+        }
+    }
+);
+// @Route   DELETE api/profile/experience
+// @desc    DELETE profile experience
+// @access  Private
+ 
+router.delete('/experience/:exp_id', auth, 
+    async(req, res) => 
+    {
+        try
+        {
+            const profile = await Profile.findOne({ user: req.user.id});
+            
+            //Get Remove Index
+            const removeIndex = profile.experience.map(item => item.id).indexOf(req.params.exp_id);
+
+            profile.experience.splice(removeIndex, 1);
+            await profile.save();
+            res.json(profile);
+        }
+        catch(err)
+        {
+                console.error(err.message);
+                res.status(500).send('Server Error');
+        }
+    }
+);
+
+
+
 module.exports = router;
