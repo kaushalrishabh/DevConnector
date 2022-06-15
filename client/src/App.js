@@ -12,6 +12,7 @@ import { Provider } from 'react-redux';
 import store from './store';
 import { loadUser } from './actions/auth';
 import setAuthToken from './utils/setAuthToken';
+import { LOGOUT } from './actions/types';
 
 //CSS
 import './App.css';
@@ -22,9 +23,13 @@ const App = () => {
       if(localStorage.token)
         setAuthToken(localStorage.token);
 
+        window.addEventListener('storage', () => {
+          if (!localStorage.token) store.dispatch({ type: LOGOUT });
+        });
+
           store.dispatch(loadUser());
     }, []);
-
+    
   return (
     <Provider store={store}>
     <Router>
