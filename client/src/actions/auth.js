@@ -49,11 +49,11 @@ export const register = ({ name, email, password }) => async dispatch =>
      //     }
      // }
     
-     const body = JSON.stringify({ name, email, password});
+     const body = ({ name, email, password});
     
     try
     {
-        const res = await api.post('/users', body);
+        const res = await api.post("/users", body);
         dispatch(
         {
             type: REGISTER_SUCCESS,
