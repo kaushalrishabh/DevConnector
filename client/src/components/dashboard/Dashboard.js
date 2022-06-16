@@ -22,7 +22,7 @@ const Dashboard = ({ getCurrentProfile, auth: {user} , profile: {profile, loadin
                <Fragment>
                   <p>  Profile Does not exist, Please add some information </p>
                   <Link to="/create-profile" className="btn btn-primary my-1">
-                   Create Profile
+                     Create Profile
                   </Link>
                </Fragment> )}
          </Fragment> 
