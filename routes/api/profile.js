@@ -11,7 +11,7 @@ const User = require('../../models/User');
 // @desc    Get current user profile
 // @access  Private
 
-router.get('/me', auth,async(req, res) => 
+router.get('/me', auth, async(req, res) => 
 {
     try
     {
@@ -24,6 +24,7 @@ router.get('/me', auth,async(req, res) =>
         {
             return res.status(400).json({ msg: 'There is no Profile for this User'});
         }
+        res.json(profile);
     }
     catch(err)
     {

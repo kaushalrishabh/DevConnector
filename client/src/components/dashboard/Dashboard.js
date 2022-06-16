@@ -7,7 +7,7 @@ const Dashboard = ({ getCurrentProfile, auth , profile }) =>
 {
    useEffect(() => {
       getCurrentProfile();
-   },[]);
+   }, []);
   
    return(
      <section className="container">
