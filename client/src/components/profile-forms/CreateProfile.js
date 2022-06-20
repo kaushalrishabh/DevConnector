@@ -1,5 +1,5 @@
 import React, {Fragment, useState} from 'react';
-import {Link, useNavigate, useMatch} from 'react-router-dom';
+import {Link, useNavigate} from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { createProfile } from '../../actions/profile';

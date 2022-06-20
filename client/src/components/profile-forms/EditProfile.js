@@ -1,5 +1,5 @@
 import React, {Fragment, useState, useEffect} from 'react';
-import {Link, useNavigate, useMatch} from 'react-router-dom';
+import {Link, useNavigate} from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { createProfile, getCurrentProfile } from '../../actions/profile';
@@ -47,7 +47,7 @@ const EditProfile = (
         linkedin: loading || !profile.social ? '' : profile.social.linkedin,
         instagram: loading || !profile.social ? '' : profile.social.instagram,
     });
-  }, [loading]);
+  }, [loading, getCurrentProfile]);
   
   const navigate = useNavigate();
   const {
@@ -199,5 +199,4 @@ const mapStateToProps = state => ({
 });
 
 export default connect(mapStateToProps,
-     {createProfile, getCurrentProfile})
-     (EditProfile);
+     {createProfile, getCurrentProfile})(EditProfile);
