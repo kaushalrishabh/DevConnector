@@ -8,6 +8,7 @@ import Alert from './components/layouts/Alert';
 import Dashboard from './components/dashboard/Dashboard';
 import CreateProfile from './components/profile-forms/CreateProfile';
 import Profiles from './components/profiles/Profiles';
+import Profile from './components/profile/Profile';
 import AddExperience from './components/profile-forms/AddExperience';
 import AddEducation from './components/profile-forms/AddEducation';
 import EditProfile from './components/profile-forms/EditProfile';
@@ -43,14 +44,15 @@ const App = () => {
       <Alert />
       <Routes>
           <Route  path = "/" element={ <Landing /> } /> 
-          <Route  path ="login" element = { <Login />} />
-          <Route  path ="register" element = { <Register />} />
-          <Route  path ="profiles" element = { <Profiles />} />
-          <Route  path ="dashboard" element = { <PrivateRoute component ={Dashboard} />} />
-          <Route  path ="create-profile" element = { <PrivateRoute component ={CreateProfile} />} />
-          <Route  path ="edit-profile" element = { <PrivateRoute component ={EditProfile} />} />
-          <Route  path ="add-experience" element = { <PrivateRoute component ={AddExperience} />} />
-          <Route  path ="add-education" element = { <PrivateRoute component ={AddEducation} />} />
+          <Route  path ="/login" element = { <Login />} />
+          <Route  path ="/register" element = { <Register />} />
+          <Route  path ="/profiles" element = { <Profiles />} />
+          <Route  path ="/profiles/:id" element = { <Profile />} />
+          <Route  path ="/dashboard" element = { <PrivateRoute component ={Dashboard} />} />
+          <Route  path ="/create-profile" element = { <PrivateRoute component ={CreateProfile} />} />
+          <Route  path ="/edit-profile" element = { <PrivateRoute component ={EditProfile} />} />
+          <Route  path ="/add-experience" element = { <PrivateRoute component ={AddExperience} />} />
+          <Route  path ="/add-education" element = { <PrivateRoute component ={AddEducation} />} />
       </Routes>
       </Fragment> 
     </Router>

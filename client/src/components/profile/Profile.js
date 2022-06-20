@@ -1,0 +1,50 @@
+import React, { Fragment, useEffect } from 'react';
+import {Link, useParams} from 'react-router-dom';
+import PropTypes from 'prop-types';
+import {connect} from 'react-redux';
+import Spinner from '../layouts/Spinner';
+import {getProfilesByID} from '../../actions/profile';
+
+const Profile = ({
+    getProfilesByID, 
+    profile: {profile, loading}, 
+    auth }) => 
+{  
+    const {id} = useParams();
+    useEffect(()=> {
+        getProfilesByID(id);
+    }, [getProfilesByID]);
+  
+    return (<section className='container'>
+        {
+            profile ===null || loading ? ( 
+            <Spinner /> ):(
+            <Fragment>
+                <Link to="/profiles" className='btn btn-light'>
+                     Back to profiles 
+                </Link>
+                {auth.isAuthenticated && 
+                auth.loading===false && 
+                auth.user._id ===profile.user._id && (
+                <Link to='/edit-profile' className='btn btn-dark'>
+                    Edit Profile
+                </Link>
+                )}
+            </Fragment>
+        )}
+        </section>
+    );
+};
+
+Profile.propTypes = {
+    getProfilesByID: PropTypes.func.isRequired,
+    profile: PropTypes.object.isRequired,
+    auth: PropTypes.object.isRequired
+};
+
+const mapStateToProps = state => ({
+    profile: state.profile,
+    auth: state.auth
+});
+
+export default connect(mapStateToProps, {getProfilesByID})(Profile);

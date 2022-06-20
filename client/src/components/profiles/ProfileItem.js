@@ -23,7 +23,7 @@ return (
             <p className='my-1'>
                 {location && <span>{location}</span>} 
             </p>
-            <Link to={`profile/${_id}`} className='btn btn-primary'>
+            <Link to={`${_id}`} className='btn btn-primary'>
                 View Profile
             </Link>
         </div>
