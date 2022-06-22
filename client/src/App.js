@@ -14,6 +14,8 @@ import AddEducation from './components/profile-forms/AddEducation';
 import EditProfile from './components/profile-forms/EditProfile';
 import Posts from './components/posts/posts';
 import PrivateRoute from './components/routing/PrivateRoute';
+import Post from './components/post/Post';
+
 //Redux
 import { Provider } from 'react-redux';
 import store from './store';
@@ -33,7 +35,6 @@ const App = () => {
         window.addEventListener('storage', () => {
           if (!localStorage.token) store.dispatch({ type: LOGOUT });
         });
-
           store.dispatch(loadUser());
     }, []);
     
@@ -55,6 +56,7 @@ const App = () => {
           <Route  path ="/add-experience" element = { <PrivateRoute component ={AddExperience} />} />
           <Route  path ="/add-education" element = { <PrivateRoute component ={AddEducation} />} />
           <Route  path ="/posts" element = { <PrivateRoute component ={Posts} />} />
+          <Route  path ="/posts/:id" element = { <PrivateRoute component ={Post} />} />
       </Routes>
       </Fragment> 
     </Router>

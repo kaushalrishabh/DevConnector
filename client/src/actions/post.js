@@ -5,7 +5,8 @@ import {
     POST_ERROR,
     UPDATE_LIKES,
     DELETE_POST,
-    ADD_POST
+    ADD_POST,
+    GET_POST
 } from './types';
 
 // GET ALL POSTS
@@ -105,6 +106,26 @@ export const addPost = (formData) => async dispatch => {
         });
         
         dispatch(setAlert('Post Created', 'success'));
+    }
+    catch(err)
+    {
+        dispatch({
+            type: POST_ERROR,
+            payload: { msg: err.response.statusText, status: err.response.status }
+        });
+    }
+};
+// GET ALL POSTS
+
+export const getPost = (id) => async dispatch => {
+    try
+    {
+        const res = await api.get(`/posts/${id}`);
+        
+        dispatch({
+            type: GET_POST,
+            payload: res.data
+        });
     }
     catch(err)
     {
