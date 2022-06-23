@@ -12,38 +12,35 @@ const Post = require('../../models/Post');
 // @desc    Create a Post
 // @access  Private
 
-router.post('/', 
-    [ 
-        auth, 
-        [   
-            check('text','Text is required')
-            .not()
-            .isEmpty()
-        ] 
-    ],  
-    async(req, res) => 
-    {
+router.post('/',
+    [
+        auth,
+        [
+            check('text', 'Text is required')
+                .not()
+                .isEmpty()
+        ]
+    ],
+    async (req, res) => {
         const errors = validationResult(req);
-        if(!errors.isEmpty())
-            return res.status(400).json({errors : errors.array() });
+        if (!errors.isEmpty())
+            return res.status(400).json({ errors: errors.array() });
 
-        try
-        {
+        try {
             const user = await User.findById(req.user.id).select('-password');
-    
+
             const newPost = new Post(
-            {
-                text: req.body.text,
-                name: user.name,
-                avatar: user.avatar,
-                user: req.user.id
-            });
+                {
+                    text: req.body.text,
+                    name: user.name,
+                    avatar: user.avatar,
+                    user: req.user.id
+                });
 
             const post = await newPost.save();
             res.json(post);
         }
-        catch(err)
-        {
+        catch (err) {
             console.error(err.message);
             res.status(400).send('Server Errors');
         }
@@ -55,14 +52,12 @@ router.post('/',
 // @desc    GET all Post
 // @access  Private
 
-router.get('/', auth, async(req, res)=>{
-    try
-    {
+router.get('/', auth, async (req, res) => {
+    try {
         const posts = await Post.find().sort({ date: -1 });
         res.json(posts);
     }
-    catch(err)
-    {
+    catch (err) {
         console.error(err.message);
         res.status(500).send(' Server Error');
     }
@@ -73,22 +68,20 @@ router.get('/', auth, async(req, res)=>{
 // @desc    GET post by ID
 // @access  Private
 
-router.get('/:id', auth, async(req, res)=>{
-    try
-    {
+router.get('/:id', auth, async (req, res) => {
+    try {
         const posts = await Post.findById(req.params.id);
-        
-        if(!posts)
+
+        if (!posts)
             return res.status(404).send('Post not found');
-        
+
         res.json(posts);
     }
-    catch(err)
-    {
+    catch (err) {
         console.error(err.message);
-        if(err.kind ==='ObjectId')
+        if (err.kind === 'ObjectId')
             return res.status(404).send('Post not found');
-        
+
         res.status(500).send(' Server Error');
     }
 
@@ -98,29 +91,27 @@ router.get('/:id', auth, async(req, res)=>{
 // @desc    Delete a Post
 // @access  Private
 
-router.delete('/:id', auth, async(req, res)=>{
-    try
-    {
+router.delete('/:id', auth, async (req, res) => {
+    try {
         const posts = await Post.findById(req.params.id);
-     
+
         // Check User
 
-        if(!posts)
+        if (!posts)
             return res.status(404).send('Post not found');
 
-        if(posts.user.toString() !== req.user.id)
+        if (posts.user.toString() !== req.user.id)
             return res.status(401).send('User not Authorized');
-        
+
         await posts.remove();
-        
-        res.json({ msg: 'Post Removed'});
+
+        res.json({ msg: 'Post Removed' });
     }
-    catch(err)
-    {
+    catch (err) {
         console.error(err.message);
-        if(err.kind ==='ObjectId')
+        if (err.kind === 'ObjectId')
             return res.status(404).send('Post not found');
-     
+
         res.status(500).send(' Server Error');
     }
 
@@ -130,23 +121,21 @@ router.delete('/:id', auth, async(req, res)=>{
 // @desc    Like a post
 // @access  Private
 
-router.put('/like/:id', auth, async(req, res) => {
-    try
-    {
+router.put('/like/:id', auth, async (req, res) => {
+    try {
         const post = await Post.findById(req.params.id);
 
         //Check if the post has been liked
-        if(post.likes.filter(like => like.user.toString() === req.user.id).length > 0)
+        if (post.likes.filter(like => like.user.toString() === req.user.id).length > 0)
             return res.status(400).send('Post already liked');
-    
-        post.likes.unshift({ user: req.user.id});
-        
+
+        post.likes.unshift({ user: req.user.id });
+
         await post.save();
         res.json(post.likes);
-    
+
     }
-    catch(err)
-    {
+    catch (err) {
         console.error(err.message);
         res.status(500).send('Server Error');
     }
@@ -156,29 +145,27 @@ router.put('/like/:id', auth, async(req, res) => {
 // @desc    Unlike a post
 // @access  Private
 
-router.put('/unlike/:id', auth, async(req, res) => {
+router.put('/unlike/:id', auth, async (req, res) => {
 
-    try
-    {
+    try {
         const post = await Post.findById(req.params.id);
 
         //Check if the post has been liked
-        if(post.likes.filter(like=> like.user.toString() === req.user.id).length === 0)
+        if (post.likes.filter(like => like.user.toString() === req.user.id).length === 0)
             return res.status(400).send('Post has not yet been liked');
-    
+
         //Get remove index
 
-        const removeIndex = post.likes.map(like=> like.user.toString()).indexOf(req.user.id);
+        const removeIndex = post.likes.map(like => like.user.toString()).indexOf(req.user.id);
 
         post.likes.splice(removeIndex, 1);
 
 
         await post.save();
         res.json(post.likes);
-    
+
     }
-    catch(err)
-    {
+    catch (err) {
         console.error(err.message);
         res.status(500).send('Server Error');
     }
@@ -189,27 +176,25 @@ router.put('/unlike/:id', auth, async(req, res) => {
 // @desc    Comment a Post
 // @access  Private
 
-router.post('/comment/:id', 
-    [ 
-        auth, 
-        [   
-            check('text','Text is required')
-            .not()
-            .isEmpty()
-        ] 
-    ],  
-    async(req, res) => 
-    {
+router.post('/comment/:id',
+    [
+        auth,
+        [
+            check('text', 'Text is required')
+                .not()
+                .isEmpty()
+        ]
+    ],
+    async (req, res) => {
         const errors = validationResult(req);
-        if(!errors.isEmpty())
-            return res.status(400).json({errors : errors.array() });
+        if (!errors.isEmpty())
+            return res.status(400).json({ errors: errors.array() });
 
-        try
-        {
+        try {
             const user = await User.findById(req.user.id).select('-password');
             const post = await Post.findById(req.params.id);
-           
-            const newComment = 
+
+            const newComment =
             {
                 text: req.body.text,
                 name: user.name,
@@ -217,12 +202,11 @@ router.post('/comment/:id',
                 user: req.user.id
             };
 
-            post.comment.unshift(newComment);
+            post.comments.unshift(newComment);
             await post.save();
-            res.json(post.comment);
+            res.json(post.comments);
         }
-        catch(err)
-        {
+        catch (err) {
             console.error(err.message);
             res.status(400).send('Server Errors');
         }
@@ -234,35 +218,33 @@ router.post('/comment/:id',
 // @desc    Delete a Comment
 // @access  Private
 
-router.delete('/comment/:id/:comment_id', auth, async(req, res) => {
+router.delete('/comment/:id/:comment_id', auth, async (req, res) => {
 
-    try
-    {
+    try {
         const post = await Post.findById(req.params.id);
 
         //Pull out comment
-        const comment = post.comment.find(comment => comment.id === req.params.comment_id);
-        
+        const comment = post.comments.find(comment => comment.id === req.params.comment_id);
+
         //Make sure comment exists
-        if(!comment)
+        if (!comment)
             return res.status(404).send('Comment doesnot exist');
-    
-         if(comment.user.toString() !== req.user.id)
+
+        if (comment.user.toString() !== req.user.id)
             return res.status(401).send('User not authorized');
-     
+
         //Get remove index
 
-        const removeIndex = post.comment.map(comment=> comment.user.toString()).indexOf(req.user.id);
+        const removeIndex = post.comments.map(comment => comment.user.toString()).indexOf(req.user.id);
 
         post.comment.splice(removeIndex, 1);
         await post.save();
 
         res.json(post.comment);
     }
-    catch(err)
-    {   
-         console.log(err.message);
-         res.status(500).send('Server Error');
+    catch (err) {
+        console.log(err.message);
+        res.status(500).send('Server Error');
     }
 
 });
