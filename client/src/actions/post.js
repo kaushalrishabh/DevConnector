@@ -158,7 +158,7 @@ export const deleteComment = (postId, commentId) => async dispatch => {
             payload: commentId
         });
 
-        dispatch(setAlert('Comment Deleted', 'danger'));
+        dispatch(setAlert('Comment Removed', 'success'));
     }
     catch (err) {
         dispatch({
