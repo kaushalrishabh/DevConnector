@@ -1,5 +1,5 @@
-import React, { Fragment ,useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route} from 'react-router-dom';
+import React, { Fragment, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/layouts/navbar';
 import Landing from './components/layouts/landing';
 import Login from './components/auth/Login';
@@ -15,6 +15,7 @@ import EditProfile from './components/profile-forms/EditProfile';
 import Posts from './components/posts/posts';
 import PrivateRoute from './components/routing/PrivateRoute';
 import Post from './components/post/Post';
+import NotFound from './components/layouts/NotFound';
 
 //Redux
 import { Provider } from 'react-redux';
@@ -26,40 +27,41 @@ import { LOGOUT } from './actions/types';
 //CSS
 import './App.css';
 
-if(localStorage.token)
-setAuthToken(localStorage.token);
+if (localStorage.token)
+  setAuthToken(localStorage.token);
 
-const App = () => { 
-    useEffect(() => {            
+const App = () => {
+  useEffect(() => {
 
-        window.addEventListener('storage', () => {
-          if (!localStorage.token) store.dispatch({ type: LOGOUT });
-        });
-          store.dispatch(loadUser());
-    }, []);
-    
+    window.addEventListener('storage', () => {
+      if (!localStorage.token) store.dispatch({ type: LOGOUT });
+    });
+    store.dispatch(loadUser());
+  }, []);
+
   return (
     <Provider store={store}>
-    <Router>
-     <Fragment>
-      <Navbar />
-      <Alert />
-      <Routes>
-          <Route  path = "/" element={ <Landing /> } /> 
-          <Route  path ="/login" element = { <Login />} />
-          <Route  path ="/register" element = { <Register />} />
-          <Route  path ="/profiles" element = { <Profiles />} />
-          <Route  path ="/profiles/:id" element = { <Profile />} />
-          <Route  path ="/dashboard" element = { <PrivateRoute component ={Dashboard} />} />
-          <Route  path ="/create-profile" element = { <PrivateRoute component ={CreateProfile} />} />
-          <Route  path ="/edit-profile" element = { <PrivateRoute component ={EditProfile} />} />
-          <Route  path ="/add-experience" element = { <PrivateRoute component ={AddExperience} />} />
-          <Route  path ="/add-education" element = { <PrivateRoute component ={AddEducation} />} />
-          <Route  path ="/posts" element = { <PrivateRoute component ={Posts} />} />
-          <Route  path ="/posts/:id" element = { <PrivateRoute component ={Post} />} />
-      </Routes>
-      </Fragment> 
-    </Router>
+      <Router>
+        <Fragment>
+          <Navbar />
+          <Alert />
+          <Routes>
+            <Route path="/" element={<Landing />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/profiles" element={<Profiles />} />
+            <Route path="/profiles/:id" element={<Profile />} />
+            <Route path="/dashboard" element={<PrivateRoute component={Dashboard} />} />
+            <Route path="/create-profile" element={<PrivateRoute component={CreateProfile} />} />
+            <Route path="/edit-profile" element={<PrivateRoute component={EditProfile} />} />
+            <Route path="/add-experience" element={<PrivateRoute component={AddExperience} />} />
+            <Route path="/add-education" element={<PrivateRoute component={AddEducation} />} />
+            <Route path="/posts" element={<PrivateRoute component={Posts} />} />
+            <Route path="/posts/:id" element={<PrivateRoute component={Post} />} />
+            <Route path="/*" element={<NotFound />} />
+          </Routes>
+        </Fragment>
+      </Router>
     </Provider>
   );
 };
