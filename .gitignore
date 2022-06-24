@@ -1,4 +1,3 @@
 node_modules/
-/client/package-lock.json
-config/db.js
 config/default.json
+/client/package-lock.json
